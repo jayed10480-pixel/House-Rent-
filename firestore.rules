@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function valid(d) {
+      return d.keys().hasOnly(['id','ts','category','title','area','addr','locs','det','rent','type','phone','wa','desc','rooms','amen','photos','lat','lng','rented','owner'])
+        && d.keys().hasAll(['id','ts','category','title','area','rent','phone','owner'])
+        && d.id is number && d.ts is number
+        && d.category in ['rent','need']
+        && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
+        && d.area is string && d.area.size() >= 1 && d.area.size() <= 40
+        && d.rent is int && d.rent >= 500 && d.rent <= 1000000
+        && d.phone is string && d.phone.matches('^01[3-9][0-9]{8}$')
+        && (!('wa' in d) || (d.wa is string && (d.wa == '' || d.wa.matches('^01[3-9][0-9]{8}$'))))
+        && (!('desc' in d) || (d.desc is string && d.desc.size() <= 1500))
+        && (!('addr' in d) || (d.addr is string && d.addr.size() <= 100))
+        && (!('type' in d) || (d.type is string && d.type.size() <= 40))
+        && (!('rooms' in d) || (d.rooms is number && d.rooms >= 0 && d.rooms <= 20))
+        && (!('locs' in d) || (d.locs is list && d.locs.size() >= 1 && d.locs.size() <= 5))
+        && (!('amen' in d) || (d.amen is list && d.amen.size() <= 20))
+        && (!('det' in d) || d.det is map)
+        && (!('rented' in d) || d.rented is bool)
+        && (!('photos' in d) || (d.photos is list && d.photos.size() <= 6
+              && (d.photos.size() < 1 || (d.photos[0] is string && d.photos[0].size() < 160000))
+              && (d.photos.size() < 2 || (d.photos[1] is string && d.photos[1].size() < 160000))
+              && (d.photos.size() < 3 || (d.photos[2] is string && d.photos[2].size() < 160000))
+              && (d.photos.size() < 4 || (d.photos[3] is string && d.photos[3].size() < 160000))
+              && (d.photos.size() < 5 || (d.photos[4] is string && d.photos[4].size() < 160000))
+              && (d.photos.size() < 6 || (d.photos[5] is string && d.photos[5].size() < 160000))));
+    }
+
+    match /listings/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && valid(request.resource.data)
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.ts >= request.time.toMillis() - 600000
+        && request.resource.data.ts <= request.time.toMillis() + 600000;
+      allow update: if request.auth != null
+        && resource.data.owner == request.auth.uid
+        && request.resource.data.owner == resource.data.owner
+        && valid(request.resource.data)
+        && request.resource.data.ts >= resource.data.ts
+        && request.resource.data.ts <= request.time.toMillis() + 600000;
+      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
+    }
+  }
+}
