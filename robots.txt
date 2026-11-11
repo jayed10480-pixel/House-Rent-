@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /check.html
 
 User-agent: Mediapartners-Google
 Allow: /

@@ -1,0 +1,12 @@
+{
+  "name": "khulna-bari-vara",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:css": "node tools/build-css.mjs"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.0",
+    "esbuild": "^0.25.0"
+  }
+}

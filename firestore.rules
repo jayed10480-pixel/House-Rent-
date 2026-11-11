@@ -2,47 +2,223 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function signedIn() { return request.auth != null; }
+    // admin = Firestore e admins/{uid} document thaka account (Console theke banano; client theke likha jay na)
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function phoneOk(s) { return s is string && s.matches('^01[3-9][0-9]{8}$'); }
+
+    // one location of an ad: {area, addr, lat?, lng?}
+    function locOk(l) {
+      return l is map
+        && l.keys().hasOnly(['area','addr','lat','lng'])
+        && l.area is string && l.area.size() >= 1 && l.area.size() <= 40
+        && (!('addr' in l) || (l.addr is string && l.addr.size() <= 100))
+        && (!('lat' in l) || l.lat is number)
+        && (!('lng' in l) || l.lng is number);
+    }
+
+    // extra property details (floor, bath, ... , extra[])
+    function detOk(m) {
+      return m is map
+        && m.keys().hasOnly(['floor','bath','balc','size','furn','pref','avail','adv','bills','extra'])
+        && (!('floor' in m) || (m.floor is string && m.floor.size() <= 20))
+        && (!('bath' in m) || (m.bath is string && m.bath.size() <= 10))
+        && (!('balc' in m) || (m.balc is string && m.balc.size() <= 10))
+        && (!('size' in m) || (m.size is string && m.size.size() <= 10))
+        && (!('furn' in m) || (m.furn is string && m.furn.size() <= 30))
+        && (!('pref' in m) || (m.pref is string && m.pref.size() <= 30))
+        && (!('avail' in m) || (m.avail is string && m.avail.size() <= 40))
+        && (!('adv' in m) || (m.adv is string && m.adv.size() <= 30))
+        && (!('bills' in m) || (m.bills is string && m.bills.size() <= 30))
+        && (!('extra' in m) || (m.extra is list && m.extra.size() <= 8
+        && (m.extra.size() <= 0 || (m.extra[0] is string && m.extra[0].size() <= 30))
+        && (m.extra.size() <= 1 || (m.extra[1] is string && m.extra[1].size() <= 30))
+        && (m.extra.size() <= 2 || (m.extra[2] is string && m.extra[2].size() <= 30))
+        && (m.extra.size() <= 3 || (m.extra[3] is string && m.extra[3].size() <= 30))
+        && (m.extra.size() <= 4 || (m.extra[4] is string && m.extra[4].size() <= 30))
+        && (m.extra.size() <= 5 || (m.extra[5] is string && m.extra[5].size() <= 30))
+        && (m.extra.size() <= 6 || (m.extra[6] is string && m.extra[6].size() <= 30))
+        && (m.extra.size() <= 7 || (m.extra[7] is string && m.extra[7].size() <= 30))));
+    }
+
     function valid(d) {
-      return d.keys().hasOnly(['id','ts','category','title','area','addr','locs','det','rent','type','phone','wa','desc','rooms','amen','photos','lat','lng','rented','owner'])
-        && d.keys().hasAll(['id','ts','category','title','area','rent','phone','owner'])
+      return d.keys().hasOnly(['id','ts','category','title','area','addr','locs','det','rent','type','hasWa','desc','rooms','amen','thumb','pc','lat','lng','rented','hidden','owner'])
+        && d.keys().hasAll(['id','ts','category','title','area','rent','owner'])
         && d.id is number && d.ts is number
         && d.category in ['rent','need']
         && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
         && d.area is string && d.area.size() >= 1 && d.area.size() <= 40
         && d.rent is int && d.rent >= 500 && d.rent <= 1000000
-        && d.phone is string && d.phone.matches('^01[3-9][0-9]{8}$')
-        && (!('wa' in d) || (d.wa is string && (d.wa == '' || d.wa.matches('^01[3-9][0-9]{8}$'))))
+        && (!('hasWa' in d) || d.hasWa is bool)
+        && (!('hidden' in d) || d.hidden is bool)
         && (!('desc' in d) || (d.desc is string && d.desc.size() <= 1500))
         && (!('addr' in d) || (d.addr is string && d.addr.size() <= 100))
         && (!('type' in d) || (d.type is string && d.type.size() <= 40))
         && (!('rooms' in d) || (d.rooms is number && d.rooms >= 0 && d.rooms <= 20))
-        && (!('locs' in d) || (d.locs is list && d.locs.size() >= 1 && d.locs.size() <= 5))
-        && (!('amen' in d) || (d.amen is list && d.amen.size() <= 20))
-        && (!('det' in d) || d.det is map)
+        && (!('lat' in d) || d.lat is number)
+        && (!('lng' in d) || d.lng is number)
+        && (!('thumb' in d) || (d.thumb is string && d.thumb.size() < 32000))
+        && (!('pc' in d) || (d.pc is int && d.pc >= 0 && d.pc <= 6))
         && (!('rented' in d) || d.rented is bool)
-        && (!('photos' in d) || (d.photos is list && d.photos.size() <= 6
-              && (d.photos.size() < 1 || (d.photos[0] is string && d.photos[0].size() < 160000))
-              && (d.photos.size() < 2 || (d.photos[1] is string && d.photos[1].size() < 160000))
-              && (d.photos.size() < 3 || (d.photos[2] is string && d.photos[2].size() < 160000))
-              && (d.photos.size() < 4 || (d.photos[3] is string && d.photos[3].size() < 160000))
-              && (d.photos.size() < 5 || (d.photos[4] is string && d.photos[4].size() < 160000))
-              && (d.photos.size() < 6 || (d.photos[5] is string && d.photos[5].size() < 160000))));
+        && (!('det' in d) || detOk(d.det))
+        && (!('locs' in d) || (d.locs is list && d.locs.size() >= 1 && d.locs.size() <= 8))
+        && (!('locs' in d) || (true
+        && (d.locs.size() <= 0 || locOk(d.locs[0]))
+        && (d.locs.size() <= 1 || locOk(d.locs[1]))
+        && (d.locs.size() <= 2 || locOk(d.locs[2]))
+        && (d.locs.size() <= 3 || locOk(d.locs[3]))
+        && (d.locs.size() <= 4 || locOk(d.locs[4]))
+        && (d.locs.size() <= 5 || locOk(d.locs[5]))
+        && (d.locs.size() <= 6 || locOk(d.locs[6]))
+        && (d.locs.size() <= 7 || locOk(d.locs[7]))))
+        && (!('amen' in d) || (d.amen is list && d.amen.size() <= 20))
+        && (!('amen' in d) || (true
+        && (d.amen.size() <= 0 || (d.amen[0] is string && d.amen[0].size() <= 40))
+        && (d.amen.size() <= 1 || (d.amen[1] is string && d.amen[1].size() <= 40))
+        && (d.amen.size() <= 2 || (d.amen[2] is string && d.amen[2].size() <= 40))
+        && (d.amen.size() <= 3 || (d.amen[3] is string && d.amen[3].size() <= 40))
+        && (d.amen.size() <= 4 || (d.amen[4] is string && d.amen[4].size() <= 40))
+        && (d.amen.size() <= 5 || (d.amen[5] is string && d.amen[5].size() <= 40))
+        && (d.amen.size() <= 6 || (d.amen[6] is string && d.amen[6].size() <= 40))
+        && (d.amen.size() <= 7 || (d.amen[7] is string && d.amen[7].size() <= 40))
+        && (d.amen.size() <= 8 || (d.amen[8] is string && d.amen[8].size() <= 40))
+        && (d.amen.size() <= 9 || (d.amen[9] is string && d.amen[9].size() <= 40))
+        && (d.amen.size() <= 10 || (d.amen[10] is string && d.amen[10].size() <= 40))
+        && (d.amen.size() <= 11 || (d.amen[11] is string && d.amen[11].size() <= 40))
+        && (d.amen.size() <= 12 || (d.amen[12] is string && d.amen[12].size() <= 40))
+        && (d.amen.size() <= 13 || (d.amen[13] is string && d.amen[13].size() <= 40))
+        && (d.amen.size() <= 14 || (d.amen[14] is string && d.amen[14].size() <= 40))
+        && (d.amen.size() <= 15 || (d.amen[15] is string && d.amen[15].size() <= 40))
+        && (d.amen.size() <= 16 || (d.amen[16] is string && d.amen[16].size() <= 40))
+        && (d.amen.size() <= 17 || (d.amen[17] is string && d.amen[17].size() <= 40))
+        && (d.amen.size() <= 18 || (d.amen[18] is string && d.amen[18].size() <= 40))
+        && (d.amen.size() <= 19 || (d.amen[19] is string && d.amen[19].size() <= 40))));
+    }
+
+    // full-size photos of one ad (max 6, each < ~150 KB) -- stored apart so the ad list stays tiny
+    function photosOk(l) {
+      return l is list && l.size() >= 1 && l.size() <= 6
+        && l[0] is string && l[0].size() < 150000
+        && (l.size() < 2 || (l[1] is string && l[1].size() < 150000))
+        && (l.size() < 3 || (l[2] is string && l[2].size() < 150000))
+        && (l.size() < 4 || (l[3] is string && l[3].size() < 150000))
+        && (l.size() < 5 || (l[4] is string && l[4].size() < 150000))
+        && (l.size() < 6 || (l[5] is string && l[5].size() < 150000));
     }
 
     match /listings/{id} {
-      allow read: if true;
-      allow create: if request.auth != null
+      allow get: if true;
+      // every list query must carry a limit (our app always sets one) -> nobody can dump the whole collection cheaply
+      allow list: if request.query.limit <= 150 || isAdmin();
+      // notun post: sathe-i users/{uid} (rate limit) update korte hobe — client eki batch e kore
+      allow create: if signedIn()
         && valid(request.resource.data)
         && request.resource.data.owner == request.auth.uid
-        && request.resource.data.ts >= request.time.toMillis() - 600000
-        && request.resource.data.ts <= request.time.toMillis() + 600000;
+        && string(request.resource.data.id) == id
+        && !('hidden' in request.resource.data)
+        && request.resource.data.ts >= request.time.toMillis() - 86400000
+        && request.resource.data.ts <= request.time.toMillis() + 1800000
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.last == request.time;
+      allow update: if (signedIn()
+          && resource.data.owner == request.auth.uid
+          && request.resource.data.owner == resource.data.owner
+          && request.resource.data.id == resource.data.id
+          && valid(request.resource.data)
+          && request.resource.data.get('hidden', false) == resource.data.get('hidden', false)
+          && request.resource.data.ts >= resource.data.ts
+          && request.resource.data.ts <= request.time.toMillis() + 1800000)
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']));
+      allow delete: if (signedIn() && resource.data.owner == request.auth.uid) || isAdmin();
+    }
+
+    match /photos/{id} {
+      allow get: if true;            // read one ad's photos by id only; listing/dumping /photos is not allowed
+      allow list: if false;
+      // a photo set can only be attached to an ad of the same owner written in the same batch
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['owner','list'])
+        && request.resource.data.owner == request.auth.uid
+        && photosOk(request.resource.data.list)
+        && getAfter(/databases/$(database)/documents/listings/$(id)).data.owner == request.auth.uid;
       allow update: if request.auth != null
         && resource.data.owner == request.auth.uid
         && request.resource.data.owner == resource.data.owner
-        && valid(request.resource.data)
-        && request.resource.data.ts >= resource.data.ts
-        && request.resource.data.ts <= request.time.toMillis() + 600000;
-      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
+        && request.resource.data.keys().hasOnly(['owner','list'])
+        && photosOk(request.resource.data.list);
+      allow delete: if (signedIn() && (resource == null || resource.data.owner == request.auth.uid)) || isAdmin();
+    }
+
+    // ---- Phone/WhatsApp: shudhu 'get' (list bondho) — "নম্বর দেখুন" chaple tobe porbe ----
+    match /contacts/{id} {
+      // Aro shokto korte: "signedIn()" er bodole
+      //   signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous'
+      // likhle shudhu Google/Email login kora user-ra nombor dekhte parbe.
+      allow get: if signedIn();
+      allow list: if false;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['owner','phone','wa'])
+        && request.resource.data.keys().hasAll(['owner','phone'])
+        && request.resource.data.owner == request.auth.uid
+        && phoneOk(request.resource.data.phone)
+        && (!('wa' in request.resource.data) || request.resource.data.wa == '' || phoneOk(request.resource.data.wa))
+        && getAfter(/databases/$(database)/documents/listings/$(id)).data.owner == request.auth.uid;
+
+      allow update: if signedIn()
+        && resource.data.owner == request.auth.uid
+        && request.resource.data.keys().hasOnly(['owner','phone','wa'])
+        && request.resource.data.owner == resource.data.owner
+        && phoneOk(request.resource.data.phone)
+        && (!('wa' in request.resource.data) || request.resource.data.wa == '' || phoneOk(request.resource.data.wa));
+
+      allow delete: if (signedIn() && (resource == null || resource.data.owner == request.auth.uid)) || isAdmin();
+    }
+
+    // ---- Spam rodh: protyek user minute e 1 ti, 24 ghontay max 10 ti notun post ----
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['last','win','n'])
+        && request.resource.data.last == request.time
+        && request.resource.data.win == request.time
+        && request.resource.data.n == 1;
+
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['last','win','n'])
+        && request.resource.data.last == request.time
+        && request.time > resource.data.last + duration.value(60, 's')
+        && (
+          (request.time > resource.data.win + duration.value(24, 'h')
+             && request.resource.data.win == request.time
+             && request.resource.data.n == 1)
+          ||
+          (request.resource.data.win == resource.data.win
+             && request.resource.data.n == resource.data.n + 1
+             && request.resource.data.n <= 10)
+        );
+    }
+
+    // ---- Report (protyek user protyek post e ekbar) ----
+    match /reports/{rid} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['lid','uid','reason','ts'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.lid is number
+        && rid == string(request.resource.data.lid) + '_' + request.auth.uid
+        && request.resource.data.reason in ['fake','rented','wrong','dup','bad','other']
+        && request.resource.data.ts == request.time
+        && exists(/databases/$(database)/documents/listings/$(string(request.resource.data.lid)));
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+
+    // ---- Admin list: shudhu Firebase Console theke banao ----
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
     }
   }
 }

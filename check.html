@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>সেটআপ টেস্ট — খুলনা বাড়ি ভাড়া</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Hind Siliguri',system-ui,sans-serif;background:#f1f5f9;color:#0f172a}
+main{max-width:760px;margin:0 auto;padding:1rem}
+h1{font-size:1.2rem;color:#059669}
+.r{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:.7rem 1rem;margin:.5rem 0}
+.r b{display:block}.r small{color:#64748b;display:block;margin-top:.2rem;word-break:break-word}
+.ok{border-left:6px solid #059669}.no{border-left:6px solid #dc2626}.wa{border-left:6px solid #d97706}.pe{border-left:6px solid #94a3b8}
+button{font:inherit;background:#059669;color:#fff;border:0;border-radius:12px;padding:.6rem 1.2rem;cursor:pointer}
+#sum{font-weight:700;margin:.8rem 0}
+</style>
+</head>
+<body><main>
+<h1>🧪 সেটআপ টেস্ট (এক ক্লিকে পুরো সিস্টেম যাচাই)</h1>
+<p>Firebase key বসিয়ে, rules publish করে এই পেজ খুলে নিচের বাটন চাপুন। এটি একটি <b>টেস্ট বিজ্ঞাপন</b> বানিয়ে পড়ে, নম্বর লুকানো আছে কিনা, rate-limit কাজ করছে কিনা দেখে — তারপর টেস্ট বিজ্ঞাপনটি নিজেই মুছে দেয়।</p>
+<button id="go">▶ টেস্ট চালান</button>
+<div id="sum"></div><div id="out"></div>
+<script src="firebase-config.js"></script>
+<script type="module">
+const cfg = window.FB_CONFIG, X = window.APP_CFG || {};
+const out = document.getElementById('out'), sum = document.getElementById('sum');
+let pass = 0, fail = 0, warn = 0;
+const row = (cls, t, d) => { const e = document.createElement('div'); e.className = 'r ' + cls; e.innerHTML = `<b>${t}</b>${d ? `<small>${d}</small>` : ''}`; out.appendChild(e); if (cls === 'ok') pass++; else if (cls === 'no') fail++; else if (cls === 'wa') warn++; };
+const code = e => (e && (e.code || e.message)) || String(e);
+const hint = {
+  'permission-denied': 'Firestore → Rules এ firestore.rules ফাইলের পুরো লেখা paste করে Publish করেছেন তো? (সবচেয়ে সাধারণ কারণ)',
+  'auth/operation-not-allowed': 'Authentication → Sign-in method → Anonymous Enable করুন।',
+  'auth/admin-restricted-operation': 'Authentication → Sign-in method → Anonymous Enable করুন।',
+  'failed-precondition': 'Firestore Database তৈরি করা হয়েছে তো?', 'unavailable': 'ইন্টারনেট/Firestore location দেখুন।'
+};
+const H = e => hint[code(e)] ? ' → ' + hint[code(e)] : '';
+
+document.getElementById('go').onclick = async function () {
+  this.disabled = true; out.innerHTML = ''; sum.textContent = ''; pass = fail = warn = 0;
+  try {
+    if (!(cfg && cfg.apiKey && cfg.projectId)) { row('no', '১) Firebase config', 'firebase-config.js এ apiKey/projectId ফাঁকা।'); return; }
+    row('ok', '১) Firebase config আছে', 'project: ' + cfg.projectId);
+    const V = 'https://www.gstatic.com/firebasejs/11.0.2/';
+    const [{ initializeApp }, AU, FS, AC] = await Promise.all([import(V + 'firebase-app.js'), import(V + 'firebase-auth.js'), import(V + 'firebase-firestore.js'), X.recaptchaSiteKey ? import(V + 'firebase-app-check.js') : Promise.resolve(null)]);
+    const app = initializeApp(cfg);
+    if (AC) { if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; AC.initializeAppCheck(app, { provider: new AC.ReCaptchaV3Provider(X.recaptchaSiteKey), isTokenAutoRefreshEnabled: true }); }
+    const auth = AU.getAuth(app), db = FS.getFirestore(app), { doc, getDoc, getDocs, collection, setDoc, updateDoc, writeBatch, serverTimestamp, query, limit } = FS;
+
+    row(AC ? 'ok' : 'wa', '২) App Check (spam বট ঠেকানো)', AC ? 'reCAPTCHA key দেওয়া আছে। (Console এ Enforce না করলে কাজ করবে না)' : 'বন্ধ আছে (ঐচ্ছিক) — SETUP-FIREBASE.md ধাপ ৮ দেখুন।');
+
+    let u = auth.currentUser;
+    try { u = (await AU.signInAnonymously(auth)).user; row('ok', '৩) Anonymous login', 'uid: ' + u.uid); }
+    catch (e) { row('no', '৩) Anonymous login', code(e) + H(e)); return; }
+    const uid = u.uid;
+
+    try { const s = await getDocs(query(collection(db, 'listings'), limit(1))); row('ok', '৪) বিজ্ঞাপন পড়া (read)', s.size + 'টি পাওয়া গেছে'); }
+    catch (e) { row('no', '৪) বিজ্ঞাপন পড়া (read)', code(e) + H(e)); return; }
+
+    const id = Date.now(), now = id, lref = doc(db, 'listings', String(id)), cref = doc(db, 'contacts', String(id)), uref = doc(db, 'users', uid);
+    const pub = { id, ts: now, category: 'rent', title: 'TEST — নিজে মুছে যাবে', area: 'টেস্ট', addr: '', locs: [{ area: 'টেস্ট', addr: '' }], det: {}, rent: 1000, type: 'ফ্যামিলি বাসা', hasWa: false, desc: 'setup test', rooms: 1, amen: [], pc: 0, owner: uid };
+    let d = null; try { const s = await getDoc(uref); d = s.exists() ? s.data() : null; } catch (_) {}
+    if (d && d.last && Date.now() - d.last.toMillis() < 61000) { row('wa', '৫) নতুন পোস্ট টেস্ট', 'এই ব্রাউজার থেকে ১ মিনিটের মধ্যে একটি পোস্ট করা হয়েছে (rate limit!)। ১ মিনিট পর আবার চালান।'); return; }
+    let created = false;
+    try {
+      const b = writeBatch(db);
+      b.set(lref, pub); b.set(cref, { owner: uid, phone: '01711223344', wa: '' });
+      const reset = !(d && d.win) || Date.now() - d.win.toMillis() > 864e5 + 6e4;
+      b.set(uref, reset ? { last: serverTimestamp(), win: serverTimestamp(), n: 1 } : { last: serverTimestamp(), win: d.win, n: d.n + 1 });
+      await b.commit(); created = true; row('ok', '৫) নতুন পোস্ট (বিজ্ঞাপন + নম্বর + rate-limit ডক)', 'rules ঠিক আছে');
+    } catch (e) { row('no', '৫) নতুন পোস্ট', code(e) + H(e)); }
+
+    if (created) {
+      try { const s = await getDoc(lref); const x = s.data(); row(x && !('phone' in x) ? 'ok' : 'no', '৬) ফোন নম্বর পাবলিক ডকে নেই', x && 'phone' in x ? 'ফোন listing এ আছে — পুরনো rules?' : 'নম্বর শুধু contacts এ — ঠিক আছে'); } catch (e) { row('no', '৬) বিজ্ঞাপন পুনরায় পড়া', code(e)); }
+      try { const s = await getDoc(cref); row(s.exists() && s.data().phone === '01711223344' ? 'ok' : 'no', '৭) “নম্বর দেখুন” (contacts get)', 'নম্বর পড়া গেছে'); } catch (e) { row('no', '৭) “নম্বর দেখুন” (contacts get)', code(e) + H(e)); }
+      try { await getDocs(collection(db, 'contacts')); row('no', '৮) সব নম্বর একসাথে পড়া ঠেকানো', 'list অনুমতি পেয়ে গেছে — rules এ contacts এ `allow list: if false;` আছে তো?'); }
+      catch (e) { row(code(e) === 'permission-denied' ? 'ok' : 'wa', '৮) সব নম্বর একসাথে পড়া ঠেকানো', code(e) === 'permission-denied' ? 'ব্লক হয়েছে (ঠিক)' : code(e)); }
+      try { await updateDoc(lref, { rented: true }); row('ok', '৯) নিজের পোস্ট এডিট', 'ঠিক আছে'); } catch (e) { row('no', '৯) নিজের পোস্ট এডিট', code(e) + H(e)); }
+      try { await updateDoc(lref, { hidden: true }); row('no', '১০) নিজে hidden করা ঠেকানো', 'owner নিজে hidden করতে পারছে — rules দেখুন'); }
+      catch (e) { row(code(e) === 'permission-denied' ? 'ok' : 'wa', '১০) নিজে hidden করা ঠেকানো', 'ব্লক হয়েছে (ঠিক)'); }
+      try {
+        const b = writeBatch(db), id2 = id + 1;
+        b.set(doc(db, 'listings', String(id2)), { ...pub, id: id2, ts: Date.now() }); b.set(doc(db, 'contacts', String(id2)), { owner: uid, phone: '01711223344', wa: '' });
+        b.set(uref, { last: serverTimestamp(), win: d && d.win && Date.now() - d.win.toMillis() < 864e5 ? d.win : serverTimestamp(), n: 2 });
+        await b.commit(); row('no', '১১) Rate limit (১ মিনিটে ১টি)', 'দ্বিতীয় পোস্ট চলে গেছে — rate limit কাজ করছে না!');
+        const b2 = writeBatch(db); b2.delete(doc(db, 'listings', String(id2))); b2.delete(doc(db, 'contacts', String(id2))); await b2.commit();
+      } catch (e) { row(code(e) === 'permission-denied' ? 'ok' : 'wa', '১১) Rate limit (১ মিনিটে ১টি)', code(e) === 'permission-denied' ? 'দ্বিতীয় পোস্ট ব্লক হয়েছে (ঠিক)' : code(e)); }
+      try { const b = writeBatch(db); b.delete(lref); b.delete(cref); await b.commit(); row('ok', '১২) নিজের পোস্ট মোছা (টেস্ট ক্লিনআপ)', 'টেস্ট বিজ্ঞাপন মুছে গেছে'); } catch (e) { row('no', '১২) নিজের পোস্ট মোছা', code(e) + H(e)); }
+    }
+
+    try { const s = await getDoc(doc(db, 'admins', uid)); row('ok', '১৩) অ্যাডমিন চেক', s.exists() ? 'এই অ্যাকাউন্ট অ্যাডমিন ✅' : 'এই (anonymous) অ্যাকাউন্ট অ্যাডমিন নয় — ঠিক আছে। অ্যাডমিন হতে admin.html এ Google দিয়ে লগইন করুন।'); } catch (e) { row('wa', '১৩) অ্যাডমিন চেক', code(e)); }
+
+    if (X.cloudinaryCloud && X.cloudinaryPreset) {
+      try {
+        const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), c => c.charCodeAt(0));
+        const fd = new FormData(); fd.append('file', new Blob([png], { type: 'image/png' })); fd.append('upload_preset', X.cloudinaryPreset);
+        const r = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(X.cloudinaryCloud)}/image/upload`, { method: 'POST', body: fd });
+        const j = await r.json();
+        row(r.ok && /^https:\/\/res\.cloudinary\.com\//.test(j.secure_url || '') ? 'ok' : 'no', '১৪) ছবি আপলোড (Cloudinary)', r.ok ? 'আপলোড হয়েছে ✅' : ((j.error && j.error.message) || r.status) + ' → preset টি “Unsigned” তো? cloud name ঠিক আছে তো?');
+      } catch (e) { row('no', '১৪) ছবি আপলোড (Cloudinary)', code(e)); }
+    } else row('wa', '১৪) ছবি আপলোড (Cloudinary)', 'বন্ধ আছে (ঐচ্ছিক) — ছবি base64 হিসেবে Firestore এ যাবে। SETUP-FIREBASE.md ধাপ ৯ দেখুন।');
+  } catch (e) { row('no', 'অপ্রত্যাশিত ত্রুটি', code(e)); }
+  finally { sum.textContent = `✅ ${pass} পাস · ❌ ${fail} ফেল · ⚠️ ${warn} সতর্কতা` + (fail ? ' — ❌ গুলোর নিচের নির্দেশনা দেখুন।' : ' — সব ঠিক! 🎉'); this.disabled = false; }
+};
+</script>
+</main></body></html>
