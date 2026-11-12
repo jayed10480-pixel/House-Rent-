@@ -16,15 +16,6 @@ const firebaseConfig = {
   measurementId: "G-W11FGZN0YY"
 };
 
-   window.FB_CONFIG = {
-     apiKey: "AIza....",
-     authDomain: "xxxx.firebaseapp.com",
-     projectId: "xxxx",
-     storageBucket: "xxxx.appspot.com",
-     messagingSenderId: "123456",
-     appId: "1:123456:web:abcd"
-   };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
