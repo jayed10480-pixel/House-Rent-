@@ -8,6 +8,13 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     function phoneOk(s) { return s is string && s.matches('^01[3-9][0-9]{8}$'); }
+    // Admin panel theke: banned user post korte parbe na; "নতুন পোস্ট বন্ধ"/maintenance cholle keu post korte parbe na
+    function notBanned() { return !exists(/databases/$(database)/documents/bans/$(request.auth.uid)); }
+    function postingOpen() {
+      return !exists(/databases/$(database)/documents/settings/site)
+        || (get(/databases/$(database)/documents/settings/site).data.get('postingOpen', true)
+            && get(/databases/$(database)/documents/settings/site).data.get('siteOpen', true));
+    }
 
     // one location of an ad: {area, addr, lat?, lng?}
     function locOk(l) {
@@ -44,7 +51,7 @@ service cloud.firestore {
     }
 
     function valid(d) {
-      return d.keys().hasOnly(['id','ts','category','title','area','addr','locs','det','rent','type','hasWa','desc','rooms','amen','thumb','pc','lat','lng','rented','hidden','owner'])
+      return d.keys().hasOnly(['id','ts','category','title','area','addr','locs','det','rent','type','hasWa','desc','rooms','amen','thumb','pc','lat','lng','rented','hidden','featured','owner'])
         && d.keys().hasAll(['id','ts','category','title','area','rent','owner'])
         && d.id is number && d.ts is number
         && d.category in ['rent','need']
@@ -53,6 +60,7 @@ service cloud.firestore {
         && d.rent is int && d.rent >= 500 && d.rent <= 1000000
         && (!('hasWa' in d) || d.hasWa is bool)
         && (!('hidden' in d) || d.hidden is bool)
+        && (!('featured' in d) || d.featured is bool)
         && (!('desc' in d) || (d.desc is string && d.desc.size() <= 1500))
         && (!('addr' in d) || (d.addr is string && d.addr.size() <= 100))
         && (!('type' in d) || (d.type is string && d.type.size() <= 40))
@@ -117,7 +125,8 @@ service cloud.firestore {
         && valid(request.resource.data)
         && request.resource.data.owner == request.auth.uid
         && string(request.resource.data.id) == id
-        && !('hidden' in request.resource.data)
+        && !('hidden' in request.resource.data) && !('featured' in request.resource.data)
+        && notBanned() && postingOpen()
         && request.resource.data.ts >= request.time.toMillis() - 86400000
         && request.resource.data.ts <= request.time.toMillis() + 1800000
         && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.last == request.time;
@@ -127,9 +136,14 @@ service cloud.firestore {
           && request.resource.data.id == resource.data.id
           && valid(request.resource.data)
           && request.resource.data.get('hidden', false) == resource.data.get('hidden', false)
+          && request.resource.data.get('featured', false) == resource.data.get('featured', false)
           && request.resource.data.ts >= resource.data.ts
           && request.resource.data.ts <= request.time.toMillis() + 1800000)
-        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hidden']));
+        // admin: jekono post-er jekono field edit (hide, feature, rented, renew, title...) — valid() ta thakbei
+        || (isAdmin()
+            && request.resource.data.owner == resource.data.owner
+            && request.resource.data.id == resource.data.id
+            && valid(request.resource.data));
       allow delete: if (signedIn() && resource.data.owner == request.auth.uid) || isAdmin();
     }
 
@@ -178,7 +192,7 @@ service cloud.firestore {
 
     // ---- Spam rodh: protyek user minute e 1 ti, 24 ghontay max 10 ti notun post ----
     match /users/{uid} {
-      allow read: if signedIn() && request.auth.uid == uid;
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
 
       allow create: if signedIn() && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(['last','win','n'])
@@ -210,15 +224,36 @@ service cloud.firestore {
         && rid == string(request.resource.data.lid) + '_' + request.auth.uid
         && request.resource.data.reason in ['fake','rented','wrong','dup','bad','other']
         && request.resource.data.ts == request.time
+        && notBanned()
         && exists(/databases/$(database)/documents/listings/$(string(request.resource.data.lid)));
       allow read, delete: if isAdmin();
       allow update: if false;
     }
 
     // ---- Admin list: shudhu Firebase Console theke banao ----
+    // prothom admin Console theke banate hoy; tarpor admin panel theke aro admin jora/soranor jay
     match /admins/{uid} {
-      allow read: if signedIn() && request.auth.uid == uid;
-      allow write: if false;
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if false;
+    }
+
+    // ---- Site settings (announcement, ads id, maintenance...): shobai pore, shudhu admin likhe ----
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---- Banned users: user nijer ban status dekhte pare, admin sob ----
+    match /bans/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ---- Admin action log ----
+    match /adminlog/{lid} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
     }
   }
 }

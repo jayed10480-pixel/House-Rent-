@@ -27,6 +27,8 @@
 1. Admin hobe je Google account, seta diye ekbar `tomar-site/admin.html` e login koro → "admin noy" page e tomar **UID** dekhabe, copy koro.
 2. Firebase Console → Firestore → **Start collection** → ID: `admins` → Document ID = oi UID → ekta field dao (jemon `ok` = `true`) → Save.
 3. Abar `admin.html` reload koro — report, hide/delete, statistics dekhte parbe. Site er menu (👤) te-o "🛠 অ্যাডমিন প্যানেল" link ashbe.
+4. Admin panel e tomar nijer kono kaj-i console e jete hobe na: bigyapon edit/hide/feature/delete, user ban, announcement bar, post bondho/maintenance, hero text, AdSense/Analytics ID, extra area, aro admin jora — sob `admin.html` theke. Details: README.md er "অ্যাডমিন প্যানেল" section.
+5. **Notun `firestore.rules` abar Publish korte hobe** (ban/settings/admin-edit er rules ekhane).
 
 
 

@@ -9,31 +9,40 @@
 <link rel="icon" href="icon-192.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f5f9;--card:#fff;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--ac:#059669;--rd:#dc2626;--am:#d97706}
+:root{--bg:#f1f5f9;--card:#fff;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--ac:#059669;--rd:#dc2626;--am:#d97706;--bl:#2563eb}
 @media(prefers-color-scheme:dark){:root{--bg:#08181a;--card:#10252a;--tx:#e2e8f0;--mu:#94a3b8;--bd:#25414a}}
 *{box-sizing:border-box}body{margin:0;font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
 header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd);padding:.7rem 1rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 header h1{font-size:1.05rem;margin:0;flex:1;color:var(--ac)}
-main{max-width:980px;margin:0 auto;padding:1rem}
+main{max-width:1060px;margin:0 auto;padding:1rem}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:1rem;margin-bottom:.8rem}
-.tabs{display:flex;gap:.4rem;margin-bottom:1rem;overflow-x:auto}
-.tab,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:.5rem .9rem;cursor:pointer;white-space:nowrap}
+.tabs{display:flex;gap:.4rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:.2rem}
+.tab,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:.45rem .85rem;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
 .tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.btn.rd{background:var(--rd);color:#fff;border-color:var(--rd)}.btn.am{background:var(--am);color:#fff;border-color:var(--am)}.btn.gr{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.sm{padding:.25rem .6rem;font-size:.82rem;border-radius:10px}
+.btn.rd{background:var(--rd);color:#fff;border-color:var(--rd)}.btn.am{background:var(--am);color:#fff;border-color:var(--am)}.btn.gr{background:var(--ac);color:#fff;border-color:var(--ac)}.btn.bl{background:var(--bl);color:#fff;border-color:var(--bl)}
 .btn:disabled{opacity:.5}
-.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}.sp{flex:1}
+.row{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center}.sp{flex:1}
 .mu{color:var(--mu);font-size:.82rem}.b{display:inline-block;border-radius:999px;padding:.1rem .6rem;font-size:.75rem;font-weight:600;background:var(--bd)}
-.b.r{background:#fee2e2;color:#b91c1c}.b.a{background:#fef3c7;color:#92400e}.b.g{background:#d1fae5;color:#047857}
-input[type=search]{font:inherit;width:100%;padding:.6rem .9rem;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);margin-bottom:.8rem}
+.b.r{background:#fee2e2;color:#b91c1c}.b.a{background:#fef3c7;color:#92400e}.b.g{background:#d1fae5;color:#047857}.b.bl{background:#dbeafe;color:#1d4ed8}
+input[type=search],input[type=text],input[type=email],input[type=number],textarea,select{font:inherit;width:100%;padding:.55rem .8rem;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+textarea{min-height:5rem;resize:vertical}
+label.f{display:block;margin:.55rem 0}label.f>span{display:block;font-size:.82rem;color:var(--mu);margin-bottom:.2rem}
+label.ck{display:flex;gap:.5rem;align-items:center;margin:.4rem 0;cursor:pointer}label.ck input{width:1.1rem;height:1.1rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem}.stat b{display:block;font-size:1.6rem}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.8rem}
 .bar{height:10px;border-radius:6px;background:var(--ac);min-width:2px}
 code{background:var(--bd);padding:.1rem .4rem;border-radius:6px;word-break:break-all}
-h3{margin:.2rem 0 .3rem;font-size:1rem}
-#toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:.5rem 1rem;border-radius:12px;display:none;z-index:9}
+h3{margin:.2rem 0 .3rem;font-size:1rem}h4{margin:.8rem 0 .3rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}td,th{padding:.45rem .4rem;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:20;display:flex;align-items:center;justify-content:center;padding:1rem}
+.ov .card{max-width:520px;width:100%;max-height:90vh;overflow:auto;margin:0}
+.bulk{position:sticky;bottom:.6rem;z-index:6;background:var(--tx);color:var(--bg);border-radius:14px;padding:.6rem .9rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.8rem}
+#toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:.5rem 1rem;border-radius:12px;display:none;z-index:30;max-width:90vw}
 </style>
 </head>
 <body>
-<header><h1>🛠 অ্যাডমিন প্যানেল</h1><span id="who" class="mu"></span><a class="btn" href="./" style="text-decoration:none">← সাইট</a><button id="outBtn" class="btn" hidden>লগআউট</button></header>
+<header><h1>🛠 অ্যাডমিন প্যানেল</h1><span id="who" class="mu"></span><a class="btn" href="./">← সাইট</a><button id="outBtn" class="btn" hidden>লগআউট</button></header>
 <main id="app"><div class="card">লোড হচ্ছে…</div></main>
 <div id="toast" role="status"></div>
 <script src="firebase-config.js"></script>

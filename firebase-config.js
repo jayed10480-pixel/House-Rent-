@@ -1,21 +1,21 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCvDULaEaTNUXtbHI9ay5llhF7l2kC_N1g",
-  authDomain: "khulna-bari-vara.firebaseapp.com",
-  projectId: "khulna-bari-vara",
-  storageBucket: "khulna-bari-vara.firebasestorage.app",
-  messagingSenderId: "720914300680",
-  appId: "1:720914300680:web:d50ab3c5e2ffd2ded536bd",
-  measurementId: "G-W11FGZN0YY"
+/* ===== 1) Firebase =====
+   Firebase Console → Project settings → Your apps → Web app → "firebaseConfig" er value gulo ekhane boshao.
+   Faka thakle site localStorage mode e cholbe (shudhu nijer browser e dekha jabe). */
+window.FB_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+/* ===== 2) Optional extra (sob free, card lage na) ===== */
+window.APP_CFG = {
+  /* Spam/bot rodh: Firebase App Check → reCAPTCHA v3 "site key" (SETUP-FIREBASE.md step 8). Faka = off */
+  recaptchaSiteKey: "",
+  /* Chobi upload: Cloudinary free account → cloud name + UNSIGNED upload preset (SETUP-FIREBASE.md step 9).
+     Faka thakle chobi chhoto kore Firestore e base64 hishebe save hobe (agerr moto, ~1MB limit). */
+  cloudinaryCloud: "",
+  cloudinaryPreset: ""
+};

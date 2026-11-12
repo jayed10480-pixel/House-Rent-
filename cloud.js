@@ -33,9 +33,15 @@ if (cfg && cfg.apiKey) {
     const db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
     const col = collection(db, 'listings');
 
-    let uid = null, unsub = [], admin = false, ready = false;
+    let uid = null, unsub = [], admin = false, banned = false, ready = false;
     const contacts = new Map();
-    const me = () => { const u = auth.currentUser; return u ? { uid: u.uid, anon: u.isAnonymous, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '', admin } : null; };
+    const me = () => { const u = auth.currentUser; return u ? { uid: u.uid, anon: u.isAnonymous, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '', admin, banned } : null; };
+
+    // Site settings (admin panel theke) — public doc, live update. Auth lage na.
+    onSnapshot(doc(db, 'settings', 'site'), s => {
+      const v = s.exists() ? s.data() : {};
+      window.CLOUD_SETTINGS = v; emit('cloud:settings', v);
+    }, () => {});
 
     function listen(u) {
       unsub.forEach(f => f()); unsub = [];
@@ -143,6 +149,7 @@ if (cfg && cfg.apiKey) {
       if (user.uid !== uid) {
         uid = user.uid; admin = false; listen(uid);
         try { admin = (await getDoc(doc(db, 'admins', uid))).exists(); } catch (_) {}
+        banned = false; try { banned = (await getDoc(doc(db, 'bans', uid))).exists(); } catch (_) {}
       }
       emit('cloud:auth', me());
       if (first) handleEmailLink();

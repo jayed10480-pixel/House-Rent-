@@ -218,12 +218,14 @@ html .text-slate-400{color:#64748b}html .text-slate-500{color:#526071}
   </div>
 </header>
 
+<div id="annBar" class="hidden text-center text-sm font-semibold px-4 py-2" role="status"></div>
+<div id="maintBar" class="hidden fixed inset-0 z-[60] bg-slate-900/95 text-white items-center justify-center text-center p-8" role="alert"><div><div class="text-5xl mb-4">🛠</div><p id="maintMsg" class="text-lg font-semibold max-w-md"></p></div></div>
 <div id="demoBar" class="hidden bg-amber-100 text-amber-700 text-center text-sm font-semibold px-4 py-2">⚠️ ডেমো মোড: অনলাইন ডেটাবেস চালু হয়নি, তাই এখানের বিজ্ঞাপন শুধু আপনার ব্রাউজারে থাকবে।</div>
 <section class="max-w-6xl mx-auto px-4 py-10 text-center">
-  <span class="hero-badge">✨ ১০০% ফ্রি • কোনো কমিশন নেই</span>
-  <h2 class="grad-text text-3xl md:text-5xl font-bold mb-4 leading-tight">খুলনায় খুঁজুন আপনার পছন্দের ভাড়া বাসা</h2>
+  <span id="heroBadge" class="hero-badge">✨ ১০০% ফ্রি • কোনো কমিশন নেই</span>
+  <h2 id="heroTitle" class="grad-text text-3xl md:text-5xl font-bold mb-4 leading-tight">খুলনায় খুঁজুন আপনার পছন্দের ভাড়া বাসা</h2>
   <div class="hstats"><span><i>🏠</i> <b id="stAds">০</b> <em>টি বিজ্ঞাপন</em></span><span><i>📍</i> <b id="stAr">০</b> <em>টি এলাকা</em></span><span>⚡ ১০০% ফ্রি</span><button id="installBtn" type="button" class="hidden">📲 অ্যাপ ইন্সটল</button></div>
-  <p class="text-slate-600 max-w-xl mx-auto text-sm md:text-base">বাসা খুঁজুন, অথবা বাড়িওয়ালা ও ভাড়াটিয়া উভয়েই সরাসরি নিজের বিজ্ঞাপন দিন।</p>
+  <p id="heroSub" class="text-slate-600 max-w-xl mx-auto text-sm md:text-base">বাসা খুঁজুন, অথবা বাড়িওয়ালা ও ভাড়াটিয়া উভয়েই সরাসরি নিজের বিজ্ঞাপন দিন।</p>
   <div class="flex justify-center gap-3 mt-6" role="tablist">
     <button id="tabRent" role="tab" data-tab="rent" class="px-6 py-2.5 rounded-xl font-semibold transition">বাসা ভাড়া দেওয়া হবে</button>
     <button id="tabNeed" role="tab" data-tab="need" class="px-6 py-2.5 rounded-xl font-semibold transition">বাসা খুঁজছি (ভাড়াটিয়া)</button>
@@ -371,7 +373,7 @@ Object.assign(EN,{"✨ ১০০% ফ্রি • কোনো কমিশন 
 Object.assign(EN,{"বিস্তারিত":"Details","কেমন বাসা চান, কোথায়, কত ভাড়ায় — সহজ ভাষায় লিখুন":"What kind of home, where, and your budget — in plain words","যে সুবিধাগুলো থাকতেই হবে":"Facilities it must have","দৌলতপুর":"Daulatpur","খালিশপুর":"Khalishpur","শিববাড়ী":"Shibbari","ছাদে কাপড় শুকানোর জায়গা, বাড়িওয়ালা নিচতলায় থাকেন, কাছেই মসজিদ":"Rooftop to dry clothes, landlord lives on ground floor, mosque nearby","১ জানুয়ারি থেকে":"From 1 January","⚡ দ্রুত যোগ করুন":"⚡ Quick add","✅ যা যা সুবিধা অবশ্যই চাই":"✅ Facilities I must have","১ বেডরুম":"1 bedroom","২ বেডরুম":"2 bedrooms","৩ বেডরুম":"3 bedrooms","নিরালা":"Nirala","সোনাডাঙা":"Sonadanga","যেমন: ২ বেডরুম, গ্যাস, লিফট, নিরালা বা সোনাডাঙা":"e.g. 2 bedrooms, gas, lift, Nirala or Sonadanga","যা যা সুবিধা অবশ্যই চাই":"Facilities I must have","চাহিদা মুছুন":"Clear requirements","📣 এই চাহিদা দিয়ে বিজ্ঞাপন দিন":"📣 Post an ad with these requirements","মিল":"match","টি":""});
 Object.assign(EN,{"ব্যাকগ্রাউন্ড রং":"Background colour","অটো রঙ বদল":"Auto colour shift","সবুজ":"Green","সাগর":"Ocean","সূর্যাস্ত":"Sunset","বেগুনি":"Violet"});
 Object.assign(EN,{"লেখার সাইজ":"Text size","আগের ছবি":"Previous photo","পরের ছবি":"Next photo","ছবি":"Photo","⚠️ ডেমো মোড: অনলাইন ডেটাবেস চালু হয়নি, তাই এখানের বিজ্ঞাপন শুধু আপনার ব্রাউজারে থাকবে।":"⚠️ Demo mode: the online database is not set up, so ads here stay only in your browser.","ছবি লোড করা যায়নি":"Could not load photos","ছবি লোড হচ্ছে...":"Loading photos...","ছবি প্রসেস করা যায়নি, অন্য ছবি দিন।":"Could not process the photo, try another.","ছবিগুলো মোট বেশি বড় — কয়েকটি ছবি বাদ দিন।":"Photos are too large in total — remove a few.","ছবি লোড হয়নি — ফর্ম বন্ধ করে আবার এডিট করুন।":"Photos did not load — close this form and edit again.","সেভ হয়নি — আবার চেষ্টা করুন":"Not saved — please try again","অনলাইন সংযোগে সমস্যা — ইন্টারনেট ও সেটআপ দেখুন":"Online connection problem — check internet and setup"});
-Object.assign(EN,{"অ্যাকাউন্ট":"Account","🚩 রিপোর্ট করুন":"🚩 Report","সমস্যাটি বেছে নিন — অ্যাডমিন যাচাই করে ব্যবস্থা নেবেন।":"Pick the problem — an admin will review it.","বন্ধ করুন":"Close","নম্বর দেখুন":"Show number","🚫 অ্যাডমিন লুকিয়েছেন":"🚫 Hidden by admin","ভুয়া / প্রতারণা":"Fake / scam","ভাড়া হয়ে গেছে":"Already rented","ভুল নম্বর বা তথ্য":"Wrong number or info","একই বিজ্ঞাপন বারবার":"Duplicate ad","আপত্তিকর বিষয়বস্তু":"Offensive content","অন্য কারণ":"Other reason","ধন্যবাদ, রিপোর্ট জমা হয়েছে":"Thanks, report submitted","আপনি আগেই রিপোর্ট করেছেন":"You already reported this","নম্বর আনা যায়নি, আবার চেষ্টা করুন":"Couldn’t load the number, try again","নম্বর দেখতে আগে লগইন করুন":"Please log in to see the number","একটু অপেক্ষা করুন — প্রতি ১ মিনিটে একটির বেশি নতুন বিজ্ঞাপন দেওয়া যায় না।":"Please wait — only one new ad per minute is allowed.","আজকের জন্য সর্বোচ্চ ১০টি বিজ্ঞাপনের সীমা শেষ। কাল আবার চেষ্টা করুন।":"Daily limit of 10 ads reached. Try again tomorrow.","অনুমতি পাওয়া যায়নি — একটু পরে আবার চেষ্টা করুন।":"Not allowed right now — please try again shortly.","ছবি আপলোড শেষ হওয়া পর্যন্ত অপেক্ষা করুন।":"Please wait until photos finish uploading.","সর্বোচ্চ ৬টি ছবি দেওয়া যাবে":"Up to 6 photos allowed","ছবি আপলোড করা যায়নি":"Photo upload failed","আপনার বিজ্ঞাপন সুরক্ষিত রাখতে লগইন করুন":"Log in to keep your ads safe","✅ লগইন সংযুক্ত — আপনার বিজ্ঞাপন এখন নিরাপদ":"✅ Logged in — your ads are now safe","আগের অ্যাকাউন্টে প্রবেশ করেছেন":"Signed in to your existing account","লগআউট হয়েছে":"Logged out","পপআপ ব্লক হয়েছে — অনুমতি দিন বা ইমেইল লিংক ব্যবহার করুন":"Popup blocked — allow it or use the email link","এই ডোমেইন Firebase → Authorized domains এ যোগ করা নেই":"This domain isn’t in Firebase → Authorized domains","লগইন করা যায়নি, আবার চেষ্টা করুন":"Login failed, please try again","📧 লিংক পাঠানো হয়েছে — ইমেইল চেক করুন":"📧 Link sent — check your email","সঠিক ইমেইল দিন":"Enter a valid email"});
+Object.assign(EN,{"⭐ ফিচার্ড":"⭐ Featured","সাইটে কিছু কাজ চলছে, একটু পরে আবার আসুন।":"We’re doing some maintenance — please come back shortly.","আপনার অ্যাকাউন্ট থেকে নতুন বিজ্ঞাপন দেওয়া নিষিদ্ধ করা হয়েছে":"Posting new ads from your account has been disabled","বর্তমানে নতুন বিজ্ঞাপন নেওয়া সাময়িক বন্ধ আছে":"New ads are temporarily closed","অ্যাকাউন্ট":"Account","🚩 রিপোর্ট করুন":"🚩 Report","সমস্যাটি বেছে নিন — অ্যাডমিন যাচাই করে ব্যবস্থা নেবেন।":"Pick the problem — an admin will review it.","বন্ধ করুন":"Close","নম্বর দেখুন":"Show number","🚫 অ্যাডমিন লুকিয়েছেন":"🚫 Hidden by admin","ভুয়া / প্রতারণা":"Fake / scam","ভাড়া হয়ে গেছে":"Already rented","ভুল নম্বর বা তথ্য":"Wrong number or info","একই বিজ্ঞাপন বারবার":"Duplicate ad","আপত্তিকর বিষয়বস্তু":"Offensive content","অন্য কারণ":"Other reason","ধন্যবাদ, রিপোর্ট জমা হয়েছে":"Thanks, report submitted","আপনি আগেই রিপোর্ট করেছেন":"You already reported this","নম্বর আনা যায়নি, আবার চেষ্টা করুন":"Couldn’t load the number, try again","নম্বর দেখতে আগে লগইন করুন":"Please log in to see the number","একটু অপেক্ষা করুন — প্রতি ১ মিনিটে একটির বেশি নতুন বিজ্ঞাপন দেওয়া যায় না।":"Please wait — only one new ad per minute is allowed.","আজকের জন্য সর্বোচ্চ ১০টি বিজ্ঞাপনের সীমা শেষ। কাল আবার চেষ্টা করুন।":"Daily limit of 10 ads reached. Try again tomorrow.","অনুমতি পাওয়া যায়নি — একটু পরে আবার চেষ্টা করুন।":"Not allowed right now — please try again shortly.","ছবি আপলোড শেষ হওয়া পর্যন্ত অপেক্ষা করুন।":"Please wait until photos finish uploading.","সর্বোচ্চ ৬টি ছবি দেওয়া যাবে":"Up to 6 photos allowed","ছবি আপলোড করা যায়নি":"Photo upload failed","আপনার বিজ্ঞাপন সুরক্ষিত রাখতে লগইন করুন":"Log in to keep your ads safe","✅ লগইন সংযুক্ত — আপনার বিজ্ঞাপন এখন নিরাপদ":"✅ Logged in — your ads are now safe","আগের অ্যাকাউন্টে প্রবেশ করেছেন":"Signed in to your existing account","লগআউট হয়েছে":"Logged out","পপআপ ব্লক হয়েছে — অনুমতি দিন বা ইমেইল লিংক ব্যবহার করুন":"Popup blocked — allow it or use the email link","এই ডোমেইন Firebase → Authorized domains এ যোগ করা নেই":"This domain isn’t in Firebase → Authorized domains","লগইন করা যায়নি, আবার চেষ্টা করুন":"Login failed, please try again","📧 লিংক পাঠানো হয়েছে — ইমেইল চেক করুন":"📧 Link sent — check your email","সঠিক ইমেইল দিন":"Enter a valid email"});
 AMEN.forEach(a=>EN[a[0]]=a[1]);
 const MATCH=new Map(); let WISH={t:'',a:[]}; try{ const w=JSON.parse(localStorage.getItem('khulna_wish')); if(w&&typeof w.t==='string'&&Array.isArray(w.a)) WISH=w; }catch(e){}
 const wishSave=()=>{ try{ localStorage.setItem('khulna_wish',JSON.stringify(WISH)); }catch(e){} };
@@ -504,7 +506,7 @@ function card(i,k=0){
         <span><span class="${c[0]} text-xs font-semibold px-3 py-1 rounded-full">${c[1]}</span>${MATCH.has(i.id) ? `<span class="match-b">🎯 ${bnNum(MATCH.get(i.id))}% ${T('মিল')}</span>` : ''}</span>
         <span class="text-xs text-slate-500 text-right">📍 ${esc(T(i.area))}${locsOf(i).length>1 ? ` <b class="text-emerald-700">+${bnNum(locsOf(i).length-1)}</b>` : ''}${d!=null ? `<br><b class="text-emerald-700">~${bnNum(d.toFixed(1))} ${tr('কিমি দূরে','km away')}</b>` : ''}</span>
       </div>
-      ${gone ? `<span class="inline-block bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2 mr-1">${T('ভাড়া হয়ে গেছে')}</span>` : ''}${old ? `<span class="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2">${T('⏰ মেয়াদ শেষ')}</span>` : ''}${i.hidden ? `<span class="inline-block bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2 ml-1">${T('🚫 অ্যাডমিন লুকিয়েছেন')}</span>` : ''}<h4 class="text-lg font-bold mb-2">${esc(T(i.title))}</h4>
+      ${gone ? `<span class="inline-block bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2 mr-1">${T('ভাড়া হয়ে গেছে')}</span>` : ''}${old ? `<span class="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2">${T('⏰ মেয়াদ শেষ')}</span>` : ''}${i.featured ? `<span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2">${T('⭐ ফিচার্ড')}</span>` : ''}${i.hidden ? `<span class="inline-block bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-0.5 rounded-md mb-2 ml-1">${T('🚫 অ্যাডমিন লুকিয়েছেন')}</span>` : ''}<h4 class="text-lg font-bold mb-2">${esc(T(i.title))}</h4>
       <div class="flex flex-wrap gap-1.5 mb-2">${chip(esc(T(i.type)))}${i.rooms ? chip(`🛏 ${i.rooms>=5 ? '5+' : bnNum(i.rooms)} ${tr('বেডরুম','bed')}`) : ''}${(i.amen||[]).map(a => chip(esc(T(a)))).join('')}</div>
       ${(locsOf(i).length>1||i.addr) ? `<div class="flex flex-wrap gap-1.5 mb-2">${locsOf(i).map(l=>`<a href="${mapUrl(l)}" target="_blank" rel="noopener" class="text-xs bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full">📍 ${esc(T(l.area))}${l.addr?' · '+esc(T(l.addr)):''}</a>`).join('')}</div>` : ''}
       <p class="text-slate-600 text-sm mb-3 line-clamp-3">${esc(T(i.desc))}</p>${detHtml(i)}
@@ -542,7 +544,7 @@ function render(){
     (!q || areaHit(i,q) || [...locsOf(i).map(l=>l.area+' '+(l.addr||'')),i.title,i.desc,...((i.det&&i.det.extra)||[])].some(x => norm(x).includes(q) || norm(T(x)).includes(q))));
   MATCH.clear(); const wp = wishParts();
   if(wp.on) data = data.filter(i => { const m = wishScore(i,wp); if(m>0) MATCH.set(i.id, Math.round(m*100)); return m>0; });
-  data.sort((a,b) => (!!a.rented-!!b.rented) || (wp.on ? (MATCH.get(b.id)||0)-(MATCH.get(a.id)||0) : 0) || (sort==='near' ? (dist(a) ?? 1e9) - (dist(b) ?? 1e9) : sort==='low' ? a.rent-b.rent : sort==='high' ? b.rent-a.rent : (b.ts||b.id)-(a.ts||a.id)));
+  data.sort((a,b) => (!!a.rented-!!b.rented) || (!!b.featured-!!a.featured) || (wp.on ? (MATCH.get(b.id)||0)-(MATCH.get(a.id)||0) : 0) || (sort==='near' ? (dist(a) ?? 1e9) - (dist(b) ?? 1e9) : sort==='low' ? a.rent-b.rent : sort==='high' ? b.rent-a.rent : (b.ts||b.id)-(a.ts||a.id)));
   const sig = [currentTab,q,type,max,sort,rooms,favOnly,wishSig()].join('|');
   const chg = sig!==lastSig; if(chg){ shown = PAGE; lastSig = sig; } $('listingContainer').classList.toggle('noanim', !chg);
   const page = data.slice(0, shown);
@@ -605,6 +607,7 @@ $('pPhotos').addEventListener('change', async e => {
   if(tok === formTok){ uploading = Math.max(0, uploading-1); if(!uploading && !photoBusy) $('submitBtn').disabled = false; }
 });
 function openModal(cat, item){
+  if(!item && postingBlocked()) return;
   lastFocus = document.activeElement; formTok++; uploading = 0;
   $('propertyForm').reset(); formPos = null; formPhotos = []; origPh = []; photoLost = false; photoBusy = false; $('submitBtn').disabled = false; $('pPhotos').disabled = false; editId = item ? item.id : null;
   $('postCategory').value = item ? item.category : cat; cat = $('postCategory').value;
@@ -950,6 +953,55 @@ const saved = getConsent();
 if(saved){ applyConsent(saved); loadGA(); } else $('consent').classList.remove('hidden');
 const startAds = () => loadAds();
 'requestIdleCallback' in window ? requestIdleCallback(startAds, {timeout:4000}) : setTimeout(startAds, 2500);
+
+// ---- site settings from admin panel (announcement / maintenance / hero / ads / extra areas) ----
+let SET = {};
+function postingBlocked(){
+  if(ME && ME.banned){ toast('আপনার অ্যাকাউন্ট থেকে নতুন বিজ্ঞাপন দেওয়া নিষিদ্ধ করা হয়েছে'); return true; }
+  if(CLOUD_ON && (SET.postingOpen === false || SET.siteOpen === false) && !(ME && ME.admin)){ toast(SET.postingMsg || 'বর্তমানে নতুন বিজ্ঞাপন নেওয়া সাময়িক বন্ধ আছে'); return true; }
+  return false;
+}
+const ANN = {info:'bg-sky-100 text-sky-800', warn:'bg-amber-100 text-amber-800', danger:'bg-red-100 text-red-800', ok:'bg-emerald-100 text-emerald-800'};
+function applyMaint(){
+  const down = SET.siteOpen === false && !(ME && ME.admin);
+  const m = $('maintBar'); m.classList.toggle('hidden', !down); m.classList.toggle('flex', down);
+  $('maintMsg').textContent = T(SET.maintMsg || 'সাইটে কিছু কাজ চলছে, একটু পরে আবার আসুন।');
+}
+function applySettings(v){
+  SET = v || {};
+  // announcement bar (dismiss kora jay, notun lekha hole abar ashe)
+  const ab = $('annBar'), txt = (SET.annText || '').trim(), key = 'kbv_ann_' + txt.length + '_' + txt.slice(0,12);
+  let dis = false; try{ dis = sessionStorage.getItem(key) === '1'; }catch(_){}
+  if(SET.annOn && txt && !dis){
+    ab.className = 'text-center text-sm font-semibold px-4 py-2 ' + (ANN[SET.annType] || ANN.info);
+    ab.textContent = '';
+    const sp = document.createElement('span'); sp.textContent = T(txt); ab.appendChild(sp);
+    if(/^https:\/\//.test(SET.annLink || '')){ const a = document.createElement('a'); a.href = SET.annLink; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline ml-2'; a.textContent = SET.annLinkText || 'বিস্তারিত'; ab.appendChild(a); }
+    const x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'বন্ধ'); x.className = 'ml-3 opacity-60 hover:opacity-100'; x.textContent = '✕';
+    x.onclick = () => { try{ sessionStorage.setItem(key, '1'); }catch(_){} ab.className = 'hidden'; }; ab.appendChild(x);
+  } else ab.className = 'hidden';
+  applyMaint();
+  // hero text
+  [['heroBadge','heroBadge'],['heroTitle','heroTitle'],['heroSub','heroSub']].forEach(([id,k]) => { const el = $(id), t = (SET[k] || '').trim(); if(el && t) el.textContent = t; });
+  // extra areas
+  let added = false;
+  (Array.isArray(SET.areas) ? SET.areas : []).forEach(a => {
+    const bn = String((a && a.bn) || '').trim().slice(0,40), en = String((a && a.en) || '').trim().slice(0,40);
+    if(!bn || AC_AREAS.some(x => x[0] === bn)) return;
+    AC_AREAS.push([bn, en || bn, 'অন্যান্য', (bn + ' ' + en).toLowerCase()]); if(en) EN[bn] = en; added = true;
+  });
+  if(added) $('stAr').textContent = bnNum(AC_AREAS.length);
+  // contact / ads / analytics ids (validated) — code na bodle admin panel theke bosano jay
+  if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(SET.email || '')) CFG.EMAIL = SET.email;
+  if(SET.adsEnabled === false) CFG.PUB = ''; else if(/^ca-pub-\d{10,}$/.test(SET.adsPub || '')) CFG.PUB = SET.adsPub;
+  if(/^\d{6,}$/.test(SET.adsTop || '')) CFG.SLOT_TOP = SET.adsTop;
+  if(/^\d{6,}$/.test(SET.adsBottom || '')) CFG.SLOT_BOTTOM = SET.adsBottom;
+  if(/^G-[A-Z0-9]{6,}$/.test(SET.gaId || '')) CFG.GA = SET.gaId;
+  loadGA(); loadAds();
+}
+document.addEventListener('cloud:settings', e => applySettings(e.detail));
+document.addEventListener('cloud:auth', applyMaint);
+if(window.CLOUD_SETTINGS) applySettings(window.CLOUD_SETTINGS);
 
 // ---- text size (A / A+ / A++) + demo-mode notice ----
 function setFs(v){ root.dataset.fs = v; try{ localStorage.setItem('kbv_fs', v); }catch(e){} $('fsBtn').textContent = ['A','A+','A++'][+v] || 'A'; }
